@@ -1,0 +1,7 @@
+﻿{% extends "base_app.html" %}
+
+{% block app_content %}
+        {% for post in posts %}
+        <div><p>{{ post.chat_id }} - {{ post.author.username }} : <b>{{ post.message }}</b></p></div>
+        {% endfor %}
+{% endblock %}

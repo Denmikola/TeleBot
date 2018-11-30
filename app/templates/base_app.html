@@ -1,0 +1,96 @@
+﻿{% extends 'bootstrap/base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block title %}
+    TeLeBot
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{ url_for('index') }}">Запросы</a></li>
+                    <li><a href="{{ url_for('telehist') }}">Телеграмм</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_anonymous %}
+                    <li><a href="{{ url_for('login') }}">Войти</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('user', username=current_user.username) }}">{{ current_user.username }}</a></li>
+                    <li><a href="{{ url_for('logout') }}">Выйти</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {# содержимое приложения которое должно быть предоставлено в блоке app_content #}
+        {% block app_content %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+    {{ moment.lang('ru') }}
+    <script>
+        function zapr_prist($post_id, z_region, z_firstname, z_lastname, otvet, status) {
+            $(status).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+            $.post('/zapros_pristav_f', {
+                region: $(z_region).text(),
+                firstname: $(z_firstname).text(),
+                lastname: $(z_lastname).text(),
+            }).done(function(response) {
+                var interval_id = setInterval(function() 
+                   {  /* запуск таймера */                   
+                      $task= response['task'];
+                      $time=10;
+                      $.post('/zapros_pristav_s', { task: $task })
+                         .done(function(response) {
+		            $(otvet).text(response['progress'])
+                            if ( $(otvet).text()=='1 of 1') {
+                                $.post('/zapros_pristav_r', { post_id: $post_id, task: $task })
+                                 .done(function(response) {
+		                       $(otvet).text("");
+				       $(status).html(response['status']);
+                                   
+                                clearInterval(interval_id);  })                          
+                              }
+                            else {
+                                  $time--;
+                                  if ($time==0) {
+                                         $(status).text("Попробуйте еще раз");
+                                         clearInterval(interval_id);
+					}
+                                  } 
+                            })  /* остановка таймера */       
+                    } , 2000);
+
+              }).fail(function() {
+                $(status).text("Фигня случилась");
+            });
+        }
+    </script>
+{% endblock %}

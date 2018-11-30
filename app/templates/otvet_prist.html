@@ -1,0 +1,27 @@
+﻿{% extends "base_app.html" %}
+
+{% block app_content %}
+   <table class="table table-hover" border="1" width="100%">
+        <tr>
+            <th> Должник </th>
+            <th> Номер ИП </th>
+            <th> Детали </th>
+            <th> Объект </th>
+            <th> Окончание ИП </th>
+            <th> Отдел СП </th>
+            <th> Пристав </th>
+        </tr>
+    {% for post in posts %}
+        <tr>
+            <td> {{ post['name'] }} </td>
+            <td> {{ post['exe_production'] }} </td>
+            <td> {{ post['details'] }} </td>
+            <td> {{ post['subject'] }} </td>
+            <td> {{ post['ip_end'] }} </td>
+            <td> {{ post['department'] }} </td>
+            <td> {{ post['bailiff'].replace('<br>',' ') }} </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

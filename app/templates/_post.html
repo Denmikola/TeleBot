@@ -1,0 +1,39 @@
+    <table class="table table-hover">
+        <tr>
+            <td width="70px">
+                <a href="{{ url_for('user', username=post.author.username) }}">
+                    <img src="{{ post.author.avatar(70) }}" />
+                </a>
+            </td>
+            <td>
+                <a href="{{ url_for('user', username=post.author.username) }}">
+                    {{ post.author.username }}
+                </a>
+                создал запрос №
+                <span id="{{ post.id }}">{{ post.id }} </span>
+                около {{ moment(post.timestamp).fromNow() }}:
+                <br>
+                <span id="zapros_{{ post.id }}_region">{{ post.region }}</span>
+                <span id="zapros_{{ post.id }}_lastname">{{ post.lastname }}</span>
+		<span id="zapros_{{ post.id }}_firstname">{{ post.firstname }}</span>
+                <br><br>
+                <span id="zapros{{ post.id }}"> 
+                     <a href="javascript:zapr_prist(
+			    '{{ post.id }}',
+                            '#zapros_{{ post.id }}_region',
+                            '#zapros_{{ post.id }}_lastname',
+                            '#zapros_{{ post.id }}_firstname',
+			    '#otvet_prist_{{ post.id }}',
+			    '#status_prist_{{ post.id }}');">
+                         Отправить запрос</a></span>
+            </td>
+    	    <td width="140px">
+                <span id="status_prist_{{ post.id }}"><a href="{{ url_for('otvet_prist', post_id = post.id ) }}">Найдено ИП: {{ post.status_prist }} </a></span>
+                <br>
+                <span id="otvet_prist_{{ post.id }}"></span>
+            <td width="300px">
+            </td>
+
+        </tr>
+    </table>
+
