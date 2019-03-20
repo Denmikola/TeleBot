@@ -195,16 +195,3 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)
-
-def main():  
-    update_id = last_update(get_updates_json(url))['update_id']
-    while True:
-        if update_id == last_update(get_updates_json(url))['update_id']:
-           send_mess(get_chat_id(last_update(get_updates_json(url))), 'test')
-           update_id += 1
-           print(update_id)
-    sleep(1)       
-
-if __name__ == 'app.routes_':   
-    main()
-print(__name__)
